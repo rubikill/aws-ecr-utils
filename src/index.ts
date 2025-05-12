@@ -3,20 +3,24 @@ import { scanCommand } from "./commands/scan";
 import { listCommand } from "./commands/list";
 import { statsCommand } from "./commands/stats";
 import { analyseCommand } from "./commands/analyse";
+import { suggestCommand } from "./commands/suggest";
 
 const program = new Command();
 
 program.name("aws-ecr-utils").description("AWS ECR repository management and analysis tool").version("1.0.0");
 
+// Scan command
 program
-  .command("scan [AWS_PROFILE] [REGION]")
+  .command("scan [profile] [region]")
   .description("Scan AWS ECR repositories and store data in SQLite")
   .action(async (profile, region) => {
     scanCommand(profile, region);
   });
 
+// List command
 program.command("ls").description("List repository data from SQLite database").action(listCommand);
 
+// Stats command
 program
   .command("stats")
   .description("Show top 20 largest repositories")
@@ -24,11 +28,22 @@ program
     statsCommand();
   });
 
+// Analyse command
 program
   .command("analyse [repositoryName]")
   .description("Analyse image tags and group by repo, similar tag")
   .action(async (repositoryName) => {
     analyseCommand(repositoryName);
+  });
+
+// Suggest command
+program
+  .command("suggest [profile] [repositoryName]")
+  .description("Suggest actions for the user based on the analysis")
+  .action(async (profile, repositoryName) => {
+    console.log("Suggesting actions...");
+    // Implement the suggest command logic here
+    suggestCommand(profile, repositoryName);
   });
 
 program.parse();

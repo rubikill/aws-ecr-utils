@@ -1,6 +1,7 @@
-import { ECRClient, DescribeRepositoriesCommand, DescribeImagesCommand } from "@aws-sdk/client-ecr";
+import { ECRClient, DescribeRepositoriesCommand, DescribeImagesCommand, BatchDeleteImageCommand } from "@aws-sdk/client-ecr";
 import { fromIni } from "@aws-sdk/credential-providers";
 import { EC2Client, DescribeRegionsCommand } from "@aws-sdk/client-ec2";
+import chalk from "chalk";
 
 export class ECRService {
   constructor() {}
@@ -79,5 +80,25 @@ export class ECRService {
     } while (nextToken);
 
     return images;
+  }
+
+  async deleteImage(repositoryName: string, imageDigest: string, awsProfile: string, region?: string): Promise<void> {
+    const client = new ECRClient({
+      region: region,
+      credentials: fromIni({ profile: awsProfile }),
+    });
+
+    const command = new BatchDeleteImageCommand({
+      repositoryName,
+      imageIds: [{ imageDigest }],
+    });
+
+    try {
+      await client.send(command);
+      console.log(chalk.green(`Successfully deleted image ${imageDigest} from repository ${repositoryName}`));
+    } catch (error) {
+      console.error(chalk.red(`Error deleting image ${imageDigest} from repository ${repositoryName}:`), error);
+      throw error;
+    }
   }
 }

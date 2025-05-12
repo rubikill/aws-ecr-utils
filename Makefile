@@ -6,11 +6,10 @@ build:
 
 # Scan AWS ECR repositories and store data
 # Example:
-# make scan AWS_PROFILE=ama AWS_REGION=us-east-1
-
+# make scan profile=ama region=us-east-1
 scan:
 	npm run build
-	node dist/index.js scan $(AWS_PROFILE) $(AWS_REGION)
+	node dist/index.js scan $(profile) $(region)
 
 # List repository data from SQLite
 ls:
@@ -28,6 +27,13 @@ stats:
 analyse:
 	npm run build
 	node dist/index.js analyse $(repositoryName)
+
+# Suggest images to remove
+# Example:
+# make suggest profile=ama repositoryName=music-microservice-song
+suggest:
+	npm run build
+	node dist/index.js suggest $(profile) $(repositoryName)
 
 # Clean build artifacts
 clean:

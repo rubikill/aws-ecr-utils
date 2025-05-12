@@ -89,6 +89,20 @@ This command will:
 - Group image tags by repository and show similar tags
 - Show key metrics and details for each repository
 
+### Suggest Images to Remove
+```bash
+make suggest
+```bash
+make suggest AWS_PROFILE=ama AWS_REGION=us-west-2
+```
+This command will:
+- Connect to AWS using your local profile (or specify with AWS_PROFILE=your_profile option)
+- Connect to AWS using the specified region (or specify with AWS_REGION=your_region option)
+- Read from the local SQLite database
+- Suggest images that have never been pulled, grouped by repository
+- Prompt the user for confirmation before deleting the images
+- Delete the images from ECR if the user confirms
+
 ## Project Structure
 
 ```

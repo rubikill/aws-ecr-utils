@@ -8,7 +8,7 @@ export async function analyseCommand(repositoryName?: string) {
   const dbService = new DatabaseService();
 
   try {
-    const imageTagsByRepo = await dbService.getImageTagsByRepo(repositoryName);
+    const imageTagsByRepo = await dbService.imageDataService.getImageTagsByRepo(repositoryName);
 
     if (!imageTagsByRepo || Object.keys(imageTagsByRepo).length === 0) {
       console.log(chalk.yellow("No image tags found."));
@@ -24,7 +24,7 @@ export async function analyseCommand(repositoryName?: string) {
 
       // Group similar tags
       const tagGroups: { [group: string]: number } = {};
-      tags.forEach((tag) => {
+      tags.forEach((tag: string) => {
         const keywords = ["dev", "develop", "qc", "debug", "test", "feature", "release", "hotfix", "master", "version", "v\\d+\\.\\d+\\.\\d+", "v\\d+\\.\\d+"];
         let group = "other";
         for (const keyword of keywords) {
