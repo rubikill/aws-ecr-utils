@@ -28,12 +28,6 @@ export async function scanCommand(awsProfile?: string, region?: string) {
       console.log(chalk.green(`✓ Scanned repository: ${repo.repositoryName} in ${repo.region}`));
       scannedCount++;
 
-      // Skip image retrieval if repository exists and has images
-      if (await dbService.repositoryExistsAndHasImages(repo.repositoryName)) {
-        console.log(chalk.yellow(`Skipping image scan for repository ${repo.repositoryName} as it already exists in the database and has images.`));
-        continue;
-      }
-
       // Get all images for the repository
       try {
         const images = await ecrService.getAllImages(repo.repositoryName, awsProfile || "", region);
@@ -46,7 +40,7 @@ export async function scanCommand(awsProfile?: string, region?: string) {
             imageDigest: image.imageDigest || "",
             imageTags: image.imageTags ? image.imageTags.join(",") : "",
             imageSizeInBytes: image.imageSizeInBytes || 0,
-            imagePushedAt: image.imagePushedAt instanceof Date ? image.imagePushedAt.toISOString() : "",
+            imagePushedAt: image.imagePushedAt,
             imageScanStatus: image.imageScanStatus ? JSON.stringify(image.imageScanStatus) : "",
             imageScanFindingsSummary: image.imageScanFindingsSummary ? JSON.stringify(image.imageScanFindingsSummary) : "",
             imageManifestMediaType: image.imageManifestMediaType || "",

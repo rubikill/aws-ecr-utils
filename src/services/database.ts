@@ -1,12 +1,18 @@
 import sqlite3 from "sqlite3";
 import { Database } from "sqlite3";
+import * as fs from "fs";
 
 export class DatabaseService {
   private db: Database;
 
   constructor() {
-    this.db = new sqlite3.Database("ecr-repos.db");
-    this.initializeDatabase();
+    const dbPath = "ecr-repos.db";
+    if (!fs.existsSync(dbPath)) {
+      this.db = new sqlite3.Database(dbPath);
+      this.initializeDatabase();
+    } else {
+      this.db = new sqlite3.Database(dbPath);
+    }
   }
 
   private initializeDatabase(): void {
@@ -191,6 +197,54 @@ export class DatabaseService {
           resolve(row["COUNT(*)"] > 0);
         }
       });
+    });
+  }
+
+  async getRepositoriesWithNeverPulledImages(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.db.all(
+        `SELECT repository_name, COUNT(*) AS image_count
+      FROM images
+      WHERE last_recorded_pull_time IS NULL OR last_recorded_pull_time = ''
+      GROUP BY repository_name
+      ORDER BY image_count DESC`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
+    });
+  }
+
+  async getTopLargestRepositories(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.db.all(
+        `SELECT repository_name, SUM(image_size_in_bytes) AS total_size
+      FROM images
+      GROUP BY repository_name
+      ORDER BY total_size DESC
+      LIMIT 20`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
+    });
+  }
+
+  async getTopRepositoriesByImageCount(): Promise<any[]> {
+    return new Promise((resolve, reject) => {
+      this.db.all(
+        `SELECT repository_name, COUNT(image_digest) AS image_count
+      FROM images
+      GROUP BY repository_name
+      ORDER BY image_count DESC
+      LIMIT 20`,
+        (err, rows) => {
+          if (err) reject(err);
+          else resolve(rows);
+        }
+      );
     });
   }
 
