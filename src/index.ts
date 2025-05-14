@@ -4,6 +4,7 @@ import { listCommand } from "./commands/list";
 import { statsCommand } from "./commands/stats";
 import { analyseCommand } from "./commands/analyse";
 import { suggestCommand } from "./commands/suggest";
+import { reportCommand } from "./commands/report";
 
 const program = new Command();
 
@@ -45,5 +46,11 @@ program
     // Implement the suggest command logic here
     suggestCommand(profile, repositoryName);
   });
+
+program
+  .command("report")
+  .description("Generate an HTML report with ECR statistics and cleanup suggestions")
+  .option("-o, --output <path>", "Output path for the HTML report", "./ecr-report.html")
+  .action((options) => reportCommand(options.output));
 
 program.parse();

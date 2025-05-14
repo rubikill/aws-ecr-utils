@@ -1,3 +1,4 @@
 node_modules
 dist
 ecr-repos.db
+ecr-report.html

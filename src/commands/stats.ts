@@ -1,11 +1,12 @@
 import chalk from "chalk";
-import { DatabaseService } from "../services/database";
+import { getInitializedDatabaseService } from "../utils/db";
 import { table, Alignment } from "table";
 import { formatBytes } from "../utils";
+
 export async function statsCommand() {
   console.log(chalk.blue("Showing ECR statistics..."));
 
-  const dbService = new DatabaseService();
+  const dbService = await getInitializedDatabaseService();
   try {
     // Top Largest Repositories
     console.log(chalk.green("Top Largest Repositories (by total size):"));
@@ -15,9 +16,9 @@ export async function statsCommand() {
     } else {
       const data = [
         ["Rank", "Repository Name", "Total Size", "Region"],
-        ...topLargestRepositories.map((repo: { repository_name: string; total_size: number; region: string }, index: number) => [
+        ...topLargestRepositories.map((repo: { image_repository_name: string; total_size: number; region: string }, index: number) => [
           index + 1,
-          repo.repository_name,
+          repo.image_repository_name,
           formatBytes(repo.total_size),
           repo.region,
         ]),
@@ -40,7 +41,12 @@ export async function statsCommand() {
     } else {
       const data = [
         ["Rank", "Repository Name", "Image Count", "Region"],
-        ...topRepositoriesByImageCount.map((repo: { repository_name: string; image_count: number; region: string }, index: number) => [index + 1, repo.repository_name, repo.image_count, repo.region]),
+        ...topRepositoriesByImageCount.map((repo: { image_repository_name: string; image_count: number; region: string }, index: number) => [
+          index + 1,
+          repo.image_repository_name,
+          repo.image_count,
+          repo.region,
+        ]),
       ];
       const config = {
         columns: {
@@ -60,9 +66,9 @@ export async function statsCommand() {
     } else {
       const data = [
         ["Rank", "Repository Name", "Image Count", "Region"],
-        ...repositoriesWithNeverPulledImages.map((repo: { repository_name: string; image_count: number; region: string }, index: number) => [
+        ...repositoriesWithNeverPulledImages.map((repo: { image_repository_name: string; image_count: number; region: string }, index: number) => [
           index + 1,
-          repo.repository_name,
+          repo.image_repository_name,
           repo.image_count,
           repo.region,
         ]),
@@ -80,6 +86,6 @@ export async function statsCommand() {
   } catch (error) {
     console.error(chalk.red("Error retrieving statistics:"), error);
   } finally {
-    dbService.close();
+    await dbService.close();
   }
 }

@@ -1,11 +1,11 @@
 import chalk from "chalk";
-import { DatabaseService } from "../services/database";
+import { getInitializedDatabaseService } from "../utils/db";
 import { table, Alignment } from "table";
 
 export async function analyseCommand(repositoryName?: string) {
   console.log(chalk.blue("Analysing image tags..."));
 
-  const dbService = new DatabaseService();
+  const dbService = await getInitializedDatabaseService();
 
   try {
     const imageTagsByRepo = await dbService.imageDataService.getImageTagsByRepo(repositoryName);

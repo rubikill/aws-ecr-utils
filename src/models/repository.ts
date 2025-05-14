@@ -1,19 +1,19 @@
 import { Entity, PrimaryColumn, Column } from "typeorm";
 
-@Entity({ name: "repositories" })
+@Entity("repositories")
 export class Repository {
-  @PrimaryColumn()
+  @PrimaryColumn({ name: "repository_name" })
   repository_name!: string;
 
-  @Column()
+  @Column({ name: "repository_uri" })
   repository_uri!: string;
 
-  @Column()
+  @Column({ name: "created_at" })
   created_at!: string;
 
-  @Column()
+  @Column({ name: "last_updated" })
   last_updated!: string;
 
-  @Column()
+  @Column({ name: "region" })
   region!: string;
 }

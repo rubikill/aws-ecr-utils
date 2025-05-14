@@ -1,13 +1,13 @@
 import chalk from "chalk";
 import { ECRService } from "../services/ecr";
-import { DatabaseService } from "../services/database";
+import { getInitializedDatabaseService } from "../utils/db";
 
 export async function scanCommand(awsProfile?: string, region?: string) {
   console.log(chalk.blue("Scanning AWS ECR repositories..."));
   console.log(chalk.blue(`Using AWS profile: ${awsProfile}`));
   console.log(chalk.blue(`Using AWS region: ${region}`));
   const ecrService = new ECRService();
-  const dbService = new DatabaseService();
+  const dbService = await getInitializedDatabaseService();
   try {
     let scannedCount = 0;
     for await (const repo of ecrService.getAllRepositories(awsProfile || "", region)) {

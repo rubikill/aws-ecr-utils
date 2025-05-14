@@ -13,11 +13,14 @@ export class RepositoryDataService {
   }
 
   async getAllRepositories(): Promise<any[]> {
-    return this.repository
-      .createQueryBuilder("repository")
-      .leftJoinAndSelect("image", "image", "image.repository_name = repository.repository_name")
-      .select(["repository", "COUNT(image.image_digest) AS image_count"])
-      .groupBy("repository.repository_name")
-      .getRawMany();
+    try {
+      return await this.repository
+        .createQueryBuilder("repository")
+        .select(["repository.repository_name", "repository.repository_uri", "repository.created_at", "repository.last_updated", "repository.region"])
+        .getMany();
+    } catch (error) {
+      console.error("Error getting repositories:", error);
+      throw error;
+    }
   }
 }
