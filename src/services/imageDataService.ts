@@ -109,4 +109,8 @@ export class ImageDataService {
   async deleteImage(repositoryName: string, imageDigest: string): Promise<void> {
     await this.repository.delete({ repository_name: repositoryName, image_digest: imageDigest });
   }
+
+  async getAllImages(): Promise<Image[]> {
+    return this.repository.find();
+  }
 }

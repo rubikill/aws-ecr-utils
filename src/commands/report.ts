@@ -15,6 +15,16 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
     const topRepositoriesByImageCount = await dbService.imageDataService.getTopRepositoriesByImageCount();
     const repositoriesWithNeverPulledImages = await dbService.imageDataService.getRepositoriesWithNeverPulledImages();
 
+    // Fetch all images to calculate total size per repository
+    const allImages = (await dbService.imageDataService.getAllImages) ? await dbService.imageDataService.getAllImages() : [];
+    const imageSizeByRepo: Record<string, number> = {};
+    if (allImages && allImages.length > 0) {
+      for (const img of allImages) {
+        if (!imageSizeByRepo[img.repository_name]) imageSizeByRepo[img.repository_name] = 0;
+        imageSizeByRepo[img.repository_name] += img.image_size_in_bytes || 0;
+      }
+    }
+
     const totalRepositories = repositories.length;
     const totalImages = repositories.reduce((acc, repo) => acc + (repo.image_count || 0), 0);
     const totalStorage = topLargestRepositories.reduce((acc, repo) => acc + repo.total_size, 0);
@@ -22,7 +32,7 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
     const costPerGB = 0.1; // Storage is $0.10 per GB / month for data stored in private or public repositories.
     const estimatedCostSavings = repositoriesWithNeverPulledImages.reduce((acc, repo) => {
       const repoSize = topLargestRepositories.find((r) => r.image_repository_name === repo.image_repository_name)?.total_size || 0;
-      return acc + repoSize * costPerGB;
+      return acc + (repoSize / (1024 * 1024 * 1024)) * costPerGB;
     }, 0);
 
     const htmlContent = `
@@ -72,6 +82,7 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
               <tr>
                 <th class="py-2 px-4 border-b text-left">Repository Name</th>
                 <th class="py-2 px-4 border-b text-left">Image Count</th>
+                <th class="py-2 px-4 border-b text-left">Image Size (GB)</th>
                 <th class="py-2 px-4 border-b text-left">Region</th>
               </tr>
             </thead>
@@ -82,6 +93,7 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
                 <tr>
                   <td class="py-2 px-4 border-b">${repo.image_repository_name}</td>
                   <td class="py-2 px-4 border-b">${repo.image_count}</td>
+                  <td class="py-2 px-4 border-b">${((imageSizeByRepo[repo.image_repository_name] || 0) / (1024 * 1024 * 1024)).toFixed(2)}</td>
                   <td class="py-2 px-4 border-b">${repo.region}</td>
                 </tr>
               `
@@ -96,6 +108,7 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
               <tr>
                 <th class="py-2 px-4 border-b text-left">Repository Name</th>
                 <th class="py-2 px-4 border-b text-left">Image Count</th>
+                <th class="py-2 px-4 border-b text-left">Image Size (GB)</th>
                 <th class="py-2 px-4 border-b text-left">Region</th>
               </tr>
             </thead>
@@ -106,6 +119,7 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
                 <tr>
                   <td class="py-2 px-4 border-b">${repo.image_repository_name}</td>
                   <td class="py-2 px-4 border-b">${repo.image_count}</td>
+                  <td class="py-2 px-4 border-b">${((imageSizeByRepo[repo.image_repository_name] || 0) / (1024 * 1024 * 1024)).toFixed(2)}</td>
                   <td class="py-2 px-4 border-b">${repo.region}</td>
                 </tr>
               `
