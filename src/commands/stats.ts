@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { getInitializedDatabaseService } from "../utils/db";
 import { table, Alignment } from "table";
-import { formatBytes } from "../utils";
+import { formatBytes } from "../utils/stringFormat";
 
 export async function statsCommand() {
   console.log(chalk.blue("Showing ECR statistics..."));

@@ -2,7 +2,7 @@ import chalk from "chalk";
 import fs from "fs";
 import path from "path";
 import { getInitializedDatabaseService } from "../utils/db";
-import { formatBytes } from "../utils";
+import { formatBytes } from "../utils/stringFormat";
 
 export async function reportCommand(outputPath: string = "./ecr-report.html") {
   console.log(chalk.blue("Generating ECR report..."));
