@@ -47,3 +47,8 @@ install:
 # Development mode
 dev:
 	npm run dev
+
+# Generate ECR report
+report:
+	npm run build
+	node dist/index.js report
