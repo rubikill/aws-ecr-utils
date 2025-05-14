@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { DatabaseService } from "../services/database";
 import { ECRService } from "../services/ecr";
 import * as readline from "readline";
+import { getInitializedDatabaseService } from "../utils/db";
 
 async function confirm(question: string): Promise<boolean> {
   const rl = readline.createInterface({
@@ -20,7 +21,7 @@ async function confirm(question: string): Promise<boolean> {
 export async function suggestCommand(awsProfile?: string, region?: string) {
   console.log(chalk.blue("Suggesting images to remove..."));
 
-  const dbService = new DatabaseService();
+  const dbService = await getInitializedDatabaseService();
   const ecrService = new ECRService();
 
   try {
@@ -61,6 +62,6 @@ export async function suggestCommand(awsProfile?: string, region?: string) {
   } catch (error) {
     console.error(chalk.red("Error suggesting images to remove:"), error);
   } finally {
-    dbService.close();
+    await dbService.close();
   }
 }

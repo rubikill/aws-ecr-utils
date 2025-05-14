@@ -22,6 +22,9 @@ We are building AWS ECR Utils, a command-line utility tool for managing and anal
    - Track image metadata and tags
    - Support for bulk operations
 
+4. **Report Generation**:
+   - Generate an HTML report summarizing AWS ECR statistics, cleanup suggestions, and cost estimates.
+
 ## Technical Stack
 
 1. **Core Technologies**:
@@ -57,6 +60,7 @@ We are building AWS ECR Utils, a command-line utility tool for managing and anal
    - ✅ Stats command for repository analysis
    - ✅ Analyse command for tag grouping
    - ✅ Suggest command for cleanup recommendations
+   - ✅ Report command for generating HTML reports
 
 3. **Services**:
    - ✅ ECR service for AWS interactions

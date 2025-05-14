@@ -7,6 +7,7 @@
 - ✅ Command parsing and validation
 - ✅ Help documentation
 - 🔄 Interactive mode (planned)
+- **report**: Generate an HTML report summarizing AWS ECR statistics, cleanup suggestions, and cost estimates.
 
 ### 2. AWS Integration
 - ✅ ECR client setup
