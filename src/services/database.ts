@@ -1,6 +1,3 @@
-import sqlite3 from "sqlite3";
-import { Database } from "sqlite3";
-import * as fs from "fs";
 import { RepositoryDataService } from "./repositoryDataService";
 import { ImageDataService } from "./imageDataService";
 import { ErrorDataService } from "./errorDataService";
@@ -26,6 +23,9 @@ export class DatabaseService {
   }
 
   async initialize(): Promise<void> {
+    if (this.dataSource.isInitialized) {
+      return;
+    }
     try {
       await this.dataSource.initialize();
       console.log("Data Source has been initialized!");

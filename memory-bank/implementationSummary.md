@@ -278,3 +278,183 @@ class ErrorService {
 - Additional analysis metrics
 - Export functionality
 - Interactive mode
+
+## Web Application Migration Plan
+
+### 1. Project Structure
+```
+aws-ecr-utils/
+├── backend/                 # NestJS application
+│   ├── src/
+│   │   ├── config/         # Configuration management
+│   │   ├── controllers/    # API endpoints
+│   │   ├── services/       # Business logic
+│   │   ├── models/         # Data models
+│   │   └── utils/          # Utility functions
+│   └── test/               # Backend tests
+├── frontend/               # React application
+│   ├── src/
+│   │   ├── components/     # Reusable UI components
+│   │   ├── pages/         # Page components
+│   │   ├── services/      # API integration
+│   │   ├── hooks/         # Custom React hooks
+│   │   └── utils/         # Frontend utilities
+│   └── public/            # Static assets
+└── shared/                # Shared types and utilities
+```
+
+### 2. Migration Phases
+
+#### Phase 1: Backend Setup and Migration
+1. Initialize NestJS project
+   - Set up project structure
+   - Configure TypeScript
+   - Set up testing framework
+   - Configure environment variables
+
+2. Migrate Core Services
+   - Port existing services to NestJS modules
+   - Implement dependency injection
+   - Add proper error handling
+   - Set up logging
+
+3. Create REST API Endpoints
+   - AWS configuration management
+   - ECR repository scanning
+   - Report generation
+   - Progress tracking
+
+4. Database Integration
+   - Set up SQLite with TypeORM
+   - Migrate existing database schema
+   - Create data access layer
+
+#### Phase 2: Frontend Development
+1. Initialize React Project
+   - Set up with Vite
+   - Configure TailwindCSS
+   - Set up routing
+   - Configure development environment
+
+2. Core Features Implementation
+   - AWS Configuration UI
+   - Repository Management
+   - Scan Progress Tracking
+   - Report Visualization
+
+3. UI Components
+   - Dashboard layout
+   - Navigation
+   - Forms and inputs
+   - Progress indicators
+   - Data tables
+   - Charts and graphs
+
+4. State Management
+   - Implement React Query for API integration
+   - Set up global state management
+   - Handle loading and error states
+
+#### Phase 3: Integration and Testing
+1. API Integration
+   - Connect frontend with backend
+   - Implement error handling
+   - Add loading states
+   - Set up WebSocket for real-time updates
+
+2. Testing
+   - Unit tests for both frontend and backend
+   - Integration tests
+   - E2E tests
+   - Performance testing
+
+3. Documentation
+   - API documentation
+   - Component documentation
+   - Setup instructions
+   - User guide
+
+### 3. Technical Stack
+
+#### Backend
+- NestJS
+- TypeScript
+- TypeORM
+- SQLite
+- Jest for testing
+- WebSocket for real-time updates
+
+#### Frontend
+- React 18
+- TypeScript
+- TailwindCSS
+- React Query
+- React Router
+- Chart.js for visualizations
+- Vite for development
+
+### 4. Key Features to Implement
+
+1. AWS Configuration Management
+   - Profile selection
+   - Region management
+   - Credentials validation
+
+2. Repository Management
+   - List repositories
+   - Filter and search
+   - Repository details view
+
+3. Scan Management
+   - Start/stop scans
+   - Real-time progress tracking
+   - Scan history
+   - Results visualization
+
+4. Reporting
+   - Interactive reports
+   - Data visualization
+   - Export functionality
+   - Historical data comparison
+
+### 5. Development Workflow
+
+1. Setup
+   ```bash
+   # Backend
+   nest new backend
+   cd backend
+   npm install @nestjs/typeorm typeorm sqlite3
+
+   # Frontend
+   npm create vite@latest frontend -- --template react-ts
+   cd frontend
+   npm install tailwindcss postcss autoprefixer
+   ```
+
+2. Development
+   - Backend runs on port 3000
+   - Frontend runs on port 5173
+   - API proxy configured for development
+   - Hot reload enabled for both
+
+3. Production
+   - Frontend built and served from backend
+   - Single deployment package
+   - Environment-based configuration
+
+### 6. Timeline Estimation
+
+1. Phase 1 (Backend): 2-3 weeks
+2. Phase 2 (Frontend): 2-3 weeks
+3. Phase 3 (Integration): 1-2 weeks
+
+Total estimated time: 5-8 weeks
+
+### 7. Next Steps
+
+1. Set up new project structure
+2. Initialize NestJS backend
+3. Set up React frontend
+4. Begin core service migration
+5. Start implementing basic UI components

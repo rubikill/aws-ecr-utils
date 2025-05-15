@@ -1,5 +1,4 @@
 import chalk from "chalk";
-import { DatabaseService } from "../services/database";
 import { ECRService } from "../services/ecr";
 import * as readline from "readline";
 import { getInitializedDatabaseService } from "../utils/db";
