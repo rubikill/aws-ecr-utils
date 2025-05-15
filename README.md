@@ -6,6 +6,8 @@ A command-line utility tool for managing and analyzing AWS Elastic Container Reg
 
 This tool provides a convenient way to scan and manage AWS ECR repositories using your local AWS profile. It stores repository information in a local SQLite database for quick access and analysis.
 
+If you find this repository helpful, you can buy me a coffee at [https://www.buymeacoffee.com/hathietthub](https://www.buymeacoffee.com/hathietthub)
+
 ## Features
 
 - Scan AWS ECR repositories and store repository and image metadata in SQLite database
