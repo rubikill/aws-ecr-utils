@@ -114,7 +114,7 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
             </thead>
             <tbody>
               ${repositoriesWithNeverPulledImages
-                .sort((a, b) => b.image_count - a.image_count)
+                .sort((a, b) => imageSizeByRepo[b.image_repository_name] - imageSizeByRepo[a.image_repository_name])
                 .map(
                   (repo) => `
                 <tr>
