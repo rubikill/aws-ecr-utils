@@ -6,6 +6,14 @@ import chalk from "chalk";
 export class ECRService {
   constructor() {}
 
+  // getAllRegions
+  async getAllRegions(awsProfile: string): Promise<string[]> {
+    const ec2Client = new EC2Client({ credentials: fromIni({ profile: awsProfile }) });
+    const command = new DescribeRegionsCommand({});
+    const response = await ec2Client.send(command);
+    return response.Regions?.map((region) => region.RegionName).filter((name): name is string => typeof name === "string") || [];
+  }
+
   async *getAllRepositories(awsProfile: string, region?: string) {
     const ec2Client = new EC2Client({ credentials: fromIni({ profile: awsProfile }) });
     const describeRegionsCommandInput = region ? { RegionNames: [region] } : {};

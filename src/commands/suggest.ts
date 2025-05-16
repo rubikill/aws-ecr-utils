@@ -3,6 +3,7 @@ import { DatabaseService } from "../services/database";
 import { ECRService } from "../services/ecr";
 import * as readline from "readline";
 import { getInitializedDatabaseService } from "../utils/db";
+import { formatBytes } from "../utils/stringFormat";
 
 async function confirm(question: string): Promise<boolean> {
   const rl = readline.createInterface({
@@ -41,8 +42,8 @@ export async function suggestCommand(awsProfile?: string, repositoryName?: strin
     }
 
     console.log(chalk.green("Repositories with never pulled images:"));
-    repositories.forEach((repo: { image_repository_name: string; image_count: number; region: string }, index: number) => {
-      console.log(chalk.green(`${index + 1}. ${repo.image_repository_name} (${repo.image_count} images) in ${repo.region}`));
+    repositories.forEach((repo: { image_repository_name: string; image_count: number; region: string; image_size_in_bytes: number }, index: number) => {
+      console.log(chalk.green(`${index + 1}. ${repo.image_repository_name} (${repo.image_count} images) (${formatBytes(repo.image_size_in_bytes)} GB) in ${repo.region}`));
     });
 
     const shouldDelete = await confirm("Do you want to delete these images?");

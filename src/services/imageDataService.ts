@@ -61,6 +61,7 @@ export class ImageDataService {
       .select("image.repository_name")
       .addSelect("repository.region", "region")
       .addSelect("COUNT(*)", "image_count")
+      .addSelect("SUM(image.image_size_in_bytes)", "image_size_in_bytes")
       .innerJoin("repositories", "repository", "image.repository_name = repository.repository_name")
       .where("image.last_recorded_pull_time IS NULL OR image.last_recorded_pull_time = ''")
       .groupBy("image.repository_name")

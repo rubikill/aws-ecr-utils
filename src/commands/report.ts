@@ -31,8 +31,7 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
 
     const costPerGB = 0.1; // Storage is $0.10 per GB / month for data stored in private or public repositories.
     const estimatedCostSavings = repositoriesWithNeverPulledImages.reduce((acc, repo) => {
-      const repoSize = topLargestRepositories.find((r) => r.image_repository_name === repo.image_repository_name)?.total_size || 0;
-      return acc + (repoSize / (1024 * 1024 * 1024)) * costPerGB;
+      return acc + (repo.image_size_in_bytes / (1024 * 1024 * 1024)) * costPerGB;
     }, 0);
 
     const htmlContent = `
@@ -114,13 +113,13 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
             </thead>
             <tbody>
               ${repositoriesWithNeverPulledImages
-                .sort((a, b) => imageSizeByRepo[b.image_repository_name] - imageSizeByRepo[a.image_repository_name])
+                .sort((a, b) => b.image_size_in_bytes - a.image_size_in_bytes)
                 .map(
                   (repo) => `
                 <tr>
                   <td class="py-2 px-4 border-b">${repo.image_repository_name}</td>
                   <td class="py-2 px-4 border-b">${repo.image_count}</td>
-                  <td class="py-2 px-4 border-b">${((imageSizeByRepo[repo.image_repository_name] || 0) / (1024 * 1024 * 1024)).toFixed(2)}</td>
+                  <td class="py-2 px-4 border-b">${((repo.image_size_in_bytes || 0) / (1024 * 1024 * 1024)).toFixed(2)}</td>
                   <td class="py-2 px-4 border-b">${repo.region}</td>
                 </tr>
               `
