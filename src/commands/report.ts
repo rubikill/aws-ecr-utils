@@ -34,6 +34,9 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
       return acc + (repo.image_size_in_bytes / (1024 * 1024 * 1024)) * costPerGB;
     }, 0);
 
+    const totalStorageInGB = totalStorage / (1024 * 1024 * 1024);
+    const totalCost = totalStorageInGB * costPerGB;
+
     const htmlContent = `
       <!DOCTYPE html>
       <html lang="en">
@@ -129,7 +132,7 @@ export async function reportCommand(outputPath: string = "./ecr-report.html") {
           </table>
 
           <h2 class="text-2xl font-semibold text-gray-700 mt-8 mb-4">Suggested Cleanup Actions</h2>
-          <p class="text-gray-600">Estimated Cost Savings: $${estimatedCostSavings.toFixed(2)}</p>
+          <p class="text-gray-600">Estimated Cost Savings: $${estimatedCostSavings.toFixed(2)} / $${totalCost.toFixed(2)}</p>
         </div>
       </body>
       </html>
