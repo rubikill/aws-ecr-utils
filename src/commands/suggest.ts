@@ -24,7 +24,10 @@ export async function suggestCommand(awsProfile?: string, repositoryName?: strin
   let repositoryNames: string[] = [];
   // Split repositoryName by commas and trim whitespace
   if (repositoryName) {
-    repositoryNames = repositoryName.split(",").map((name) => name.trim());
+    repositoryNames = repositoryName
+      .split(",")
+      .map((name) => name.trim())
+      .filter((name) => name !== "");
   }
 
   const dbService = await getInitializedDatabaseService();
