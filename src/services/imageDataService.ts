@@ -1,4 +1,4 @@
-import { DataSource, Repository } from "typeorm";
+import { DataSource, Repository, In } from "typeorm";
 import { Image } from "../models/image";
 
 export class ImageDataService {
@@ -55,8 +55,8 @@ export class ImageDataService {
       .getRawMany();
   }
 
-  async getRepositoriesWithNeverPulledImages(): Promise<any[]> {
-    return this.repository
+  async getRepositoriesWithNeverPulledImages(repositoryNames?: string[]): Promise<any[]> {
+    let query = this.repository
       .createQueryBuilder("image")
       .select("image.repository_name")
       .addSelect("repository.region", "region")
@@ -64,8 +64,13 @@ export class ImageDataService {
       .innerJoin("repositories", "repository", "image.repository_name = repository.repository_name")
       .where("image.last_recorded_pull_time IS NULL OR image.last_recorded_pull_time = ''")
       .groupBy("image.repository_name")
-      .orderBy("image_count", "DESC")
-      .getRawMany();
+      .orderBy("image_count", "DESC");
+
+    if (repositoryNames && repositoryNames.length > 0) {
+      query = query.andWhere("image.repository_name in (:...repositoryNames)", { repositoryNames });
+    }
+
+    return query.getRawMany();
   }
 
   async repositoryExistsAndHasImages(repositoryName: string): Promise<boolean> {
@@ -83,17 +88,12 @@ export class ImageDataService {
   }
 
   async getRepositoriesWithNeverPulledImagesByName(repositoryName: string): Promise<any[]> {
-    return this.repository
-      .createQueryBuilder("image")
-      .select("image.repository_name")
-      .addSelect("repository.region", "region")
-      .addSelect("COUNT(*)", "image_count")
-      .innerJoin("repositories", "repository", "image.repository_name = repository.repository_name")
-      .where("image.last_recorded_pull_time IS NULL OR image.last_recorded_pull_time = ''")
-      .andWhere("image.repository_name = :repositoryName", { repositoryName })
-      .groupBy("image.repository_name")
-      .orderBy("image_count", "DESC")
-      .getRawMany();
+    return this.repository.find({
+      where: {
+        repository_name: repositoryName,
+        last_recorded_pull_time: "",
+      },
+    });
   }
 
   async getNeverPulledImages(repositoryName: string, region: string): Promise<any[]> {
@@ -106,8 +106,8 @@ export class ImageDataService {
       .getMany();
   }
 
-  async deleteImage(repositoryName: string, imageDigest: string): Promise<void> {
-    await this.repository.delete({ repository_name: repositoryName, image_digest: imageDigest });
+  async deleteImages(repositoryName: string, imageDigests: string[]): Promise<void> {
+    await this.repository.delete({ repository_name: repositoryName, image_digest: In(imageDigests) });
   }
 
   async getAllImages(): Promise<Image[]> {

@@ -101,4 +101,25 @@ export class ECRService {
       throw error;
     }
   }
+
+  // Delete multiple images
+  async deleteImages(repositoryName: string, imageDigests: string[], awsProfile: string, region?: string): Promise<void> {
+    const client = new ECRClient({
+      region: region,
+      credentials: fromIni({ profile: awsProfile }),
+    });
+
+    const command = new BatchDeleteImageCommand({
+      repositoryName,
+      imageIds: imageDigests.map((digest) => ({ imageDigest: digest })),
+    });
+
+    try {
+      await client.send(command);
+      console.log(chalk.green(`Successfully deleted images from repository ${repositoryName}`));
+    } catch (error) {
+      console.error(chalk.red(`Error deleting images from repository ${repositoryName}:`), error);
+      throw error;
+    }
+  }
 }
